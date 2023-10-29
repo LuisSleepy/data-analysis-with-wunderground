@@ -37,6 +37,8 @@ GROUP BY station_id
 		MAX(t1.temperature_avg) AS max_temp,
 		MAX(t1.heat_index_avg) AS max_heat_index,
 		MAX(t1.wind_chill_avg) AS max_wind_chill,
+        AVG(t1.temperature_avg) AS avg_temp,
+        AVG(t1.heat_index_avg) AS avg_heat_index,
 		AVG(t1.wind_direction_avg) as avg_wind_dir
 	FROM measurements t1
 
@@ -64,6 +66,8 @@ SELECT
 	MIN(t4.obs_time_local) AS min_heat_index_obs_time,
 	x.min_wind_chill,
 	MIN(t5.obs_time_local) AS min_wind_chill_obs_time,
+    x.avg_temp,
+    x.avg_heat_index,
 	x.avg_wind_dir,
 	x.max_temp,
 	x.max_heat_index,
@@ -89,7 +93,7 @@ AND x.min_wind_chill = t5.wind_chill_avg
 LEFT JOIN stations t6
 ON x.station_id = t6.station_id
 
-GROUP BY x.station_id, t6.neighborhood, t6.country, t6.latitude, t6.longitude, x.obs_date, x.min_temp, x.min_heat_index, x.min_wind_chill, x.avg_wind_dir, x.max_temp, x.max_heat_index, x.max_wind_chill
+GROUP BY x.station_id, t6.neighborhood, t6.country, t6.latitude, t6.longitude, x.obs_date, x.min_temp, x.min_heat_index, x.min_wind_chill, x.avg_temp, x.avg_heat_index, x.avg_wind_dir, x.max_temp, x.max_heat_index, x.max_wind_chill
 ORDER BY obs_date ASC
 """
 
@@ -169,4 +173,32 @@ df = df.with_columns(
     .alias("normal_max_temp")
 )
 
-df.write_csv(file='output-datasets/latest-28d-min-max-temp-and-related-met-params-v2.csv')
+df = df.with_columns(
+    pl.when(pl.col("obs_date").dt.month() == 1)
+    .then(pl.lit(value=26.9, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 2)
+    .then(pl.lit(value=27.5, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 3)
+    .then(pl.lit(value=28.7, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 4)
+    .then(pl.lit(value=30.3, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 5)
+    .then(pl.lit(value=30.3, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 6)
+    .then(pl.lit(value=29.7, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 7)
+    .then(pl.lit(value=28.7, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 8)
+    .then(pl.lit(value=28.5, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 9)
+    .then(pl.lit(value=28.4, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 10)
+    .then(pl.lit(value=28.6, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 11)
+    .then(pl.lit(value=28.3, dtype=pl.Float64))
+    .when(pl.col("obs_date").dt.month() == 12)
+    .then(pl.lit(value=27.4, dtype=pl.Float64))
+    .alias("normal_avg_temp")
+)
+
+df.write_csv(file='output-datasets/latest-28d-min-max-temp-and-related-met-params-v3.csv')
