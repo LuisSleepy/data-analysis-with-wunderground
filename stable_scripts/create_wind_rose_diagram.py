@@ -17,7 +17,7 @@ POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
 ### USER INPUTS HERE
-STATION_ID = 'IPARAA10'		# Weather station ID as indicated in Wunderground
+STATION_ID = 'IMUNTI6'		# Weather station ID as indicated in Wunderground
 
 
 
