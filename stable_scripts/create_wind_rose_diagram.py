@@ -17,7 +17,7 @@ POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
 ### USER INPUTS HERE
-STATION_ID = 'IPARAA10'		# Weather station ID as indicated in Wunderground
+STATION_ID = 'IMUNTI6'		# Weather station ID as indicated in Wunderground
 
 
 
@@ -45,7 +45,7 @@ LEFT JOIN latest_date_cte t2
 ON t1.station_id = t2.station_id
 
 WHERE t1.station_id IN ('{STATION_ID}')
-AND DATE(t1.obs_time_local) >= (t2.latest_date - INTERVAL '28 days')
+AND DATE(t1.obs_time_local) >= (t2.latest_date - INTERVAL '56 days')
 AND t1.qc_status = 1
 AND t1.wind_gust_avg > 0
 """
